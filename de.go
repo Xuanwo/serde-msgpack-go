@@ -15,9 +15,7 @@ func DeserializeFromReader(r io.Reader, v serde.Deserializable) error {
 	defer msgpack.PutDecoder(mde)
 	mde.Reset(r)
 
-	de := de{
-		de: mde,
-	}
+	de := de{de: mde}
 
 	return v.Deserialize(&de)
 }
@@ -201,28 +199,12 @@ func (d *de) DeserializeComplex128(v serde.Visitor) (err error) {
 	panic("implement me")
 }
 
-func (d *de) DeserializeRune(v serde.Visitor) (err error) {
-	vv, err := d.de.DecodeInt32()
-	if err != nil {
-		return err
-	}
-	return v.VisitRune(vv)
-}
-
 func (d *de) DeserializeString(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeString()
 	if err != nil {
 		return err
 	}
 	return v.VisitString(vv)
-}
-
-func (d *de) DeserializeByte(v serde.Visitor) (err error) {
-	vv, err := d.de.DecodeUint8()
-	if err != nil {
-		return err
-	}
-	return v.VisitUint8(vv)
 }
 
 func (d *de) DeserializeBytes(v serde.Visitor) (err error) {

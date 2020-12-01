@@ -15,7 +15,7 @@ func DeserializeFromReader(r io.Reader, v serde.Deserializable) error {
 	defer msgpack.PutDecoder(mde)
 	mde.Reset(r)
 
-	de := De{
+	de := de{
 		de: mde,
 	}
 
@@ -26,11 +26,11 @@ func DeserializeFromBytes(s []byte, v serde.Deserializable) error {
 	return DeserializeFromReader(bytes.NewReader(s), v)
 }
 
-type De struct {
+type de struct {
 	de *msgpack.Decoder
 }
 
-func (d *De) DeserializeAny(v serde.Visitor) (err error) {
+func (d *de) DeserializeAny(v serde.Visitor) (err error) {
 	code, err := d.de.PeekCode()
 	if err != nil {
 		return
@@ -89,7 +89,7 @@ func (d *De) DeserializeAny(v serde.Visitor) (err error) {
 	return err
 }
 
-func (d *De) DeserializeBool(v serde.Visitor) (err error) {
+func (d *de) DeserializeBool(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeBool()
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (d *De) DeserializeBool(v serde.Visitor) (err error) {
 	return v.VisitBool(vv)
 }
 
-func (d *De) DeserializeInt(v serde.Visitor) (err error) {
+func (d *de) DeserializeInt(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt()
 	if err != nil {
 		return err
@@ -105,7 +105,7 @@ func (d *De) DeserializeInt(v serde.Visitor) (err error) {
 	return v.VisitInt(vv)
 }
 
-func (d *De) DeserializeInt8(v serde.Visitor) (err error) {
+func (d *de) DeserializeInt8(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt8()
 	if err != nil {
 		return err
@@ -113,7 +113,7 @@ func (d *De) DeserializeInt8(v serde.Visitor) (err error) {
 	return v.VisitInt8(vv)
 }
 
-func (d *De) DeserializeInt16(v serde.Visitor) (err error) {
+func (d *de) DeserializeInt16(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt16()
 	if err != nil {
 		return err
@@ -121,7 +121,7 @@ func (d *De) DeserializeInt16(v serde.Visitor) (err error) {
 	return v.VisitInt16(vv)
 }
 
-func (d *De) DeserializeInt32(v serde.Visitor) (err error) {
+func (d *de) DeserializeInt32(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt32()
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func (d *De) DeserializeInt32(v serde.Visitor) (err error) {
 	return v.VisitInt32(vv)
 }
 
-func (d *De) DeserializeInt64(v serde.Visitor) (err error) {
+func (d *de) DeserializeInt64(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt64()
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (d *De) DeserializeInt64(v serde.Visitor) (err error) {
 	return v.VisitInt64(vv)
 }
 
-func (d *De) DeserializeUint(v serde.Visitor) (err error) {
+func (d *de) DeserializeUint(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint()
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func (d *De) DeserializeUint(v serde.Visitor) (err error) {
 	return v.VisitUint(vv)
 }
 
-func (d *De) DeserializeUint8(v serde.Visitor) (err error) {
+func (d *de) DeserializeUint8(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint8()
 	if err != nil {
 		return err
@@ -153,7 +153,7 @@ func (d *De) DeserializeUint8(v serde.Visitor) (err error) {
 	return v.VisitUint8(vv)
 }
 
-func (d *De) DeserializeUint16(v serde.Visitor) (err error) {
+func (d *de) DeserializeUint16(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint16()
 	if err != nil {
 		return err
@@ -161,7 +161,7 @@ func (d *De) DeserializeUint16(v serde.Visitor) (err error) {
 	return v.VisitUint16(vv)
 }
 
-func (d *De) DeserializeUint32(v serde.Visitor) (err error) {
+func (d *de) DeserializeUint32(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint32()
 	if err != nil {
 		return err
@@ -169,7 +169,7 @@ func (d *De) DeserializeUint32(v serde.Visitor) (err error) {
 	return v.VisitUint32(vv)
 }
 
-func (d *De) DeserializeUint64(v serde.Visitor) (err error) {
+func (d *de) DeserializeUint64(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint64()
 	if err != nil {
 		return err
@@ -177,7 +177,7 @@ func (d *De) DeserializeUint64(v serde.Visitor) (err error) {
 	return v.VisitUint64(vv)
 }
 
-func (d *De) DeserializeFloat32(v serde.Visitor) (err error) {
+func (d *de) DeserializeFloat32(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeFloat32()
 	if err != nil {
 		return err
@@ -185,7 +185,7 @@ func (d *De) DeserializeFloat32(v serde.Visitor) (err error) {
 	return v.VisitFloat32(vv)
 }
 
-func (d *De) DeserializeFloat64(v serde.Visitor) (err error) {
+func (d *de) DeserializeFloat64(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeFloat64()
 	if err != nil {
 		return err
@@ -193,15 +193,15 @@ func (d *De) DeserializeFloat64(v serde.Visitor) (err error) {
 	return v.VisitFloat64(vv)
 }
 
-func (d *De) DeserializeComplex64(v serde.Visitor) (err error) {
+func (d *de) DeserializeComplex64(v serde.Visitor) (err error) {
 	panic("implement me")
 }
 
-func (d *De) DeserializeComplex128(v serde.Visitor) (err error) {
+func (d *de) DeserializeComplex128(v serde.Visitor) (err error) {
 	panic("implement me")
 }
 
-func (d *De) DeserializeRune(v serde.Visitor) (err error) {
+func (d *de) DeserializeRune(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeInt32()
 	if err != nil {
 		return err
@@ -209,7 +209,7 @@ func (d *De) DeserializeRune(v serde.Visitor) (err error) {
 	return v.VisitRune(vv)
 }
 
-func (d *De) DeserializeString(v serde.Visitor) (err error) {
+func (d *de) DeserializeString(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeString()
 	if err != nil {
 		return err
@@ -217,7 +217,7 @@ func (d *De) DeserializeString(v serde.Visitor) (err error) {
 	return v.VisitString(vv)
 }
 
-func (d *De) DeserializeByte(v serde.Visitor) (err error) {
+func (d *de) DeserializeByte(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeUint8()
 	if err != nil {
 		return err
@@ -225,7 +225,7 @@ func (d *De) DeserializeByte(v serde.Visitor) (err error) {
 	return v.VisitUint8(vv)
 }
 
-func (d *De) DeserializeBytes(v serde.Visitor) (err error) {
+func (d *de) DeserializeBytes(v serde.Visitor) (err error) {
 	vv, err := d.de.DecodeBytes()
 	if err != nil {
 		return err
@@ -233,7 +233,7 @@ func (d *De) DeserializeBytes(v serde.Visitor) (err error) {
 	return v.VisitBytes(vv)
 }
 
-func (d *De) DeserializeSlice(v serde.Visitor) (err error) {
+func (d *de) DeserializeSlice(v serde.Visitor) (err error) {
 	length, err := d.de.DecodeArrayLen()
 	if err != nil {
 		return err
@@ -245,7 +245,7 @@ func (d *De) DeserializeSlice(v serde.Visitor) (err error) {
 	})
 }
 
-func (d *De) DeserializeMap(v serde.Visitor) (err error) {
+func (d *de) DeserializeMap(v serde.Visitor) (err error) {
 	length, err := d.de.DecodeMapLen()
 	if err != nil {
 		return err
@@ -257,12 +257,12 @@ func (d *De) DeserializeMap(v serde.Visitor) (err error) {
 	})
 }
 
-func (d *De) DeserializeStruct(name string, fields []string, v serde.Visitor) (err error) {
+func (d *de) DeserializeStruct(name string, fields []string, v serde.Visitor) (err error) {
 	return d.DeserializeMap(v)
 }
 
 type containerAccess struct {
-	d *De
+	d *de
 
 	length int
 	idx    int

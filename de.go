@@ -2,7 +2,7 @@ package msgpack
 
 import (
 	"bytes"
-	"errors"
+	"fmt"
 	"io"
 
 	"github.com/Xuanwo/serde-go"
@@ -83,7 +83,7 @@ func (d *De) DeserializeAny(v serde.Visitor) (err error) {
 	case msgpcode.Map16, msgpcode.Map32:
 		err = d.DeserializeMap(v)
 	default:
-		err = errors.New("not supported msgpcode")
+		err = fmt.Errorf("not supported msgpcode: %v", code)
 	}
 
 	return err

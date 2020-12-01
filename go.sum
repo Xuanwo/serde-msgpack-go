@@ -1,5 +1,7 @@
 github.com/Xuanwo/serde-go v0.0.0-20201201090419-b731ecb7b00f h1:SNDKi0oxK9wgS7AqAZlxaXw4Ysc1BLqAYz5Flgqingk=
 github.com/Xuanwo/serde-go v0.0.0-20201201090419-b731ecb7b00f/go.mod h1:wD5nHZ2SzgXjo7b38dbFP7/vHrpT1OuS3OcULyrGQCg=
+github.com/Xuanwo/serde-go v0.0.0-20201201143321-d398fc554b63 h1:tnOi/ZLoNczk+JvDe78OBUxP3cMfwWZl4/OpB97K4kI=
+github.com/Xuanwo/serde-go v0.0.0-20201201143321-d398fc554b63/go.mod h1:wD5nHZ2SzgXjo7b38dbFP7/vHrpT1OuS3OcULyrGQCg=
 github.com/Xuanwo/templateutils v0.0.0-20201019101431-c73b871118f2/go.mod h1:x0qS7gfgEm24b8V9U+0zBEBAu/VpxZhO/+EWtpgEgDw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=

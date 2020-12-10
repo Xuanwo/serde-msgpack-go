@@ -276,6 +276,10 @@ func (ca *containerAccess) NextKey(v serde.Visitor) (ok bool, err error) {
 }
 
 func (ca *containerAccess) NextValue(v serde.Visitor) (err error) {
+	defer func() {
+		ca.idx += 1
+	}()
+
 	if ca.idx >= ca.length {
 		return nil
 	}

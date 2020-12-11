@@ -1,6 +1,7 @@
 package msgpack
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -13,9 +14,16 @@ import (
 func DeserializeFromReader(r io.Reader, v serde.Deserializable) error {
 	mde := msgpack.GetDecoder()
 	defer msgpack.PutDecoder(mde)
-	mde.Reset(r)
 
 	de := de{de: mde}
+
+	if br, ok := r.(bufReader); ok {
+		de.br = br
+	} else {
+		de.br = bufio.NewReader(r)
+	}
+
+	mde.Reset(de.br)
 
 	return v.Deserialize(&de)
 }
@@ -24,7 +32,13 @@ func DeserializeFromBytes(s []byte, v serde.Deserializable) error {
 	return DeserializeFromReader(bytes.NewReader(s), v)
 }
 
+type bufReader interface {
+	io.Reader
+	io.ByteReader
+}
+
 type de struct {
+	br bufReader
 	de *msgpack.Decoder
 }
 
@@ -35,6 +49,8 @@ func (d *de) DeserializeAny(v serde.Visitor) (err error) {
 	}
 
 	if msgpcode.IsFixedNum(code) {
+		// Make sure this code has been consumed.
+		_, _ = d.br.ReadByte()
 		return v.VisitInt8(int8(code))
 	}
 	if msgpcode.IsFixedMap(code) {

@@ -7,12 +7,15 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-// serde: Deserialize
+//go:generate go run -tags tools github.com/Xuanwo/serde-go/cmd/serde ./...
+
+// serde: Deserialize,Serialize
 type Test struct {
 	A string
 	B string
 	C int32
 	D int64
+	M map[int]int
 }
 
 func TestDe_DeserializeAny(t *testing.T) {
@@ -23,6 +26,9 @@ func TestDe_DeserializeAny(t *testing.T) {
 		B: "yyy",
 		C: -112323,
 		D: 59583,
+		M: map[int]int{
+			1: 2,
+		},
 	}
 	content, err := msgpack.Marshal(ta)
 	if err != nil {

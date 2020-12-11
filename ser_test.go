@@ -13,6 +13,9 @@ func TestSer(t *testing.T) {
 		B: "qqq",
 		C: -123213,
 		D: 99855,
+		M: map[int]int{
+			1: 2,
+		},
 	}
 
 	bs, err := SerializeToBytes(&x)

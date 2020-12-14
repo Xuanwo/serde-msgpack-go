@@ -42,9 +42,9 @@ func (s *serdeMapVisitor_int_int) VisitMap(m serde.MapAccess) (err error) {
 	return nil
 }
 
-type serdeSerializer_int_int map[int]int
+type serdeMapSerializer_int_int map[int]int
 
-func (s serdeSerializer_int_int) Serialize(ser serde.Serializer) (err error) {
+func (s serdeMapSerializer_int_int) Serialize(ser serde.Serializer) (err error) {
 	st, err := ser.SerializeMap(len(s))
 	if err != nil {
 		return err
@@ -67,6 +67,130 @@ func (s serdeSerializer_int_int) Serialize(ser serde.Serializer) (err error) {
 	return nil
 }
 
+type serdeSliceVisitor_int struct {
+	v *[]int
+
+	serde.DummyVisitor
+}
+
+func serdeNewSliceVisitor_int(v *[]int) *serdeSliceVisitor_int {
+	return &serdeSliceVisitor_int{
+		v:            v,
+		DummyVisitor: serde.NewDummyVisitor("[]int"),
+	}
+}
+
+func (s *serdeSliceVisitor_int) VisitSlice(m serde.SliceAccess) (err error) {
+	var value int
+	for {
+		ok, err := m.NextElement(serde.NewIntVisitor(&value))
+		if !ok {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		*s.v = append(*s.v, value)
+
+	}
+	return nil
+}
+
+type serdeSliceSerializer_int []int
+
+func (s serdeSliceSerializer_int) Serialize(ser serde.Serializer) (err error) {
+	st, err := ser.SerializeSlice(len(s))
+	if err != nil {
+		return err
+	}
+
+	for _, v := range s {
+		err = st.SerializeElement(serde.IntSerializer(v))
+		if err != nil {
+			return
+		}
+	}
+
+	err = st.EndSlice()
+	if err != nil {
+		return
+	}
+	return nil
+}
+
+type serdeSliceVisitor_2_int struct {
+	v *[2]int
+
+	serde.DummyVisitor
+}
+
+func serdeNewSliceVisitor_2_int(v *[2]int) *serdeSliceVisitor_2_int {
+	return &serdeSliceVisitor_2_int{
+		v:            v,
+		DummyVisitor: serde.NewDummyVisitor("[2]int"),
+	}
+}
+
+func (s *serdeSliceVisitor_2_int) VisitSlice(m serde.SliceAccess) (err error) {
+	var value int
+	i := 0
+	for {
+		ok, err := m.NextElement(serde.NewIntVisitor(&value))
+		if !ok {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		(*s.v)[i] = value
+		i += 1
+
+	}
+	return nil
+}
+
+type serdeSliceSerializer_2_int [2]int
+
+func (s serdeSliceSerializer_2_int) Serialize(ser serde.Serializer) (err error) {
+	st, err := ser.SerializeSlice(len(s))
+	if err != nil {
+		return err
+	}
+
+	for _, v := range s {
+		err = st.SerializeElement(serde.IntSerializer(v))
+		if err != nil {
+			return
+		}
+	}
+
+	err = st.EndSlice()
+	if err != nil {
+		return
+	}
+	return nil
+}
+
+type serdePointerVisitor_int struct {
+	serde.IntVisitor
+}
+
+func serdeNewPointerVisitor_int(v **int) serdePointerVisitor_int {
+	// FIXME: nil is not handled correctly
+	var tv int
+	*v = &tv
+	return serdePointerVisitor_int{serde.NewIntVisitor(*v)}
+}
+
+func serdePointerSerializer_int(v *int) serde.Serializable {
+	if v == nil {
+		return serde.NilSerializer{}
+	}
+	return serde.IntSerializer(*v)
+}
+
 type serdeStructEnum_Test = int
 
 const (
@@ -75,6 +199,9 @@ const (
 	serdeStructEnum_Test_C
 	serdeStructEnum_Test_D
 	serdeStructEnum_Test_M
+	serdeStructEnum_Test_S
+	serdeStructEnum_Test_varray
+	serdeStructEnum_Test_vpointer
 )
 
 type serdeStructFieldVisitor_Test struct {
@@ -101,6 +228,12 @@ func (s *serdeStructFieldVisitor_Test) VisitString(v string) (err error) {
 		s.e = serdeStructEnum_Test_D
 	case "M":
 		s.e = serdeStructEnum_Test_M
+	case "S":
+		s.e = serdeStructEnum_Test_S
+	case "varray":
+		s.e = serdeStructEnum_Test_varray
+	case "vpointer":
+		s.e = serdeStructEnum_Test_vpointer
 	default:
 		return errors.New("invalid field")
 	}
@@ -143,6 +276,12 @@ func (s *serdeStructVisitor_Test) VisitMap(m serde.MapAccess) (err error) {
 			v = serde.NewInt64Visitor(&s.v.D)
 		case serdeStructEnum_Test_M:
 			v = serdeNewMapVisitor_int_int(&s.v.M)
+		case serdeStructEnum_Test_S:
+			v = serdeNewSliceVisitor_int(&s.v.S)
+		case serdeStructEnum_Test_varray:
+			v = serdeNewSliceVisitor_2_int(&s.v.varray)
+		case serdeStructEnum_Test_vpointer:
+			v = serdeNewPointerVisitor_int(&s.v.vpointer)
 		default:
 			return errors.New("invalid field")
 		}
@@ -160,7 +299,7 @@ func (s *Test) Deserialize(de serde.Deserializer) (err error) {
 }
 
 func (s *Test) Serialize(ser serde.Serializer) (err error) {
-	st, err := ser.SerializeStruct("Test", 5)
+	st, err := ser.SerializeStruct("Test", 8)
 	if err != nil {
 		return err
 	}
@@ -194,7 +333,28 @@ func (s *Test) Serialize(ser serde.Serializer) (err error) {
 	}
 	err = st.SerializeField(
 		serde.StringSerializer("M"),
-		serdeSerializer_int_int(s.M),
+		serdeMapSerializer_int_int(s.M),
+	)
+	if err != nil {
+		return
+	}
+	err = st.SerializeField(
+		serde.StringSerializer("S"),
+		serdeSliceSerializer_int(s.S),
+	)
+	if err != nil {
+		return
+	}
+	err = st.SerializeField(
+		serde.StringSerializer("varray"),
+		serdeSliceSerializer_2_int(s.varray),
+	)
+	if err != nil {
+		return
+	}
+	err = st.SerializeField(
+		serde.StringSerializer("vpointer"),
+		serdePointerSerializer_int(s.vpointer),
 	)
 	if err != nil {
 		return

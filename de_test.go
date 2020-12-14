@@ -11,11 +11,34 @@ import (
 
 // serde: Deserialize,Serialize
 type Test struct {
-	A string
-	B string
-	C int32
-	D int64
-	M map[int]int
+	A        string
+	B        string
+	C        int32
+	D        int64
+	M        map[int]int
+	S        []int
+	varray   [2]int
+	vpointer *int
+}
+
+func TestX(t *testing.T) {
+	log.SetFlags(log.Lshortfile)
+
+	a := 10
+	ta := Test{
+		vpointer: &a,
+	}
+	content, err := SerializeToBytes(&ta)
+	if err != nil {
+		t.Errorf("msgpack marshl: %v", err)
+	}
+
+	x := Test{}
+	err = DeserializeFromBytes(content, &x)
+	if err != nil {
+		t.Error(err)
+	}
+	log.Printf("%#+v", x)
 }
 
 func TestDe_DeserializeAny(t *testing.T) {

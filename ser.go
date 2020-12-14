@@ -28,6 +28,10 @@ type ser struct {
 	ser *msgpack.Encoder
 }
 
+func (s *ser) SerializeNil() (err error) {
+	return s.ser.EncodeNil()
+}
+
 func (s *ser) SerializeBool(v bool) (err error) {
 	return s.ser.EncodeBool(v)
 }

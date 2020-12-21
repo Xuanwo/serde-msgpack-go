@@ -9,9 +9,9 @@ import (
 
 //go:generate go run -tags tools github.com/Xuanwo/serde-go/cmd/serde ./...
 
-// serde: Deserialize,Serialize
+// serde: deserialize,serialize
 type Test struct {
-	A        string
+	A        string `serde:"skip" msgpack:"-"`
 	B        string
 	C        int32
 	D        int64
@@ -24,9 +24,8 @@ type Test struct {
 func TestX(t *testing.T) {
 	log.SetFlags(log.Lshortfile)
 
-	a := 10
 	ta := Test{
-		vpointer: &a,
+		A: "xxx",
 	}
 	content, err := SerializeToBytes(&ta)
 	if err != nil {

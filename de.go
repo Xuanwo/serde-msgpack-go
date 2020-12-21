@@ -65,7 +65,7 @@ func (d *de) DeserializeAny(v serde.Visitor) (err error) {
 
 	switch code {
 	case msgpcode.Nil:
-		err = d.de.DecodeNil()
+		err = d.DeserializeNil(v)
 	case msgpcode.False, msgpcode.True:
 		err = d.DeserializeBool(v)
 	case msgpcode.Float:
@@ -101,6 +101,14 @@ func (d *de) DeserializeAny(v serde.Visitor) (err error) {
 	}
 
 	return err
+}
+
+func (d *de) DeserializeNil(v serde.Visitor) (err error) {
+	err = d.de.DecodeNil()
+	if err != nil {
+		return
+	}
+	return v.VisitNil()
 }
 
 func (d *de) DeserializeBool(v serde.Visitor) (err error) {
